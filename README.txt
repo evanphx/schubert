@@ -1,26 +1,27 @@
 = schubert
 
-* FIX (url)
+* http://github.com/evanphx/schubert
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Schubert, a simple systems/configuration management idea
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* Simple
+* Clean
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+  Read the code
 
 == REQUIREMENTS:
 
-* FIX (list of requirements)
+* Ruby
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* get the code
 
 == DEVELOPERS:
 
@@ -35,7 +36,7 @@ and generate the RDoc.
 
 (The MIT License)
 
-Copyright (c) 2012 FIX
+Copyright (c) 2012 Evan Phoenix
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
