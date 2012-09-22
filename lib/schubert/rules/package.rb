@@ -9,8 +9,25 @@ module Schubert::Rules
       @source = nil
     end
 
+    def ==(pkg)
+      return unless pkg.kind_of? Package
+      @name == pkg.name && @source == pkg.specific_source
+    end
+
+    alias_method :eql?, :==
+
+    def hash
+      @name.hash ^ @source.hash
+    end
+
+    attr_reader :name
+
     def source(url, dir)
       @source = [url, dir]
+    end
+
+    def specific_source
+      @source
     end
 
     def up
