@@ -3,7 +3,7 @@ require "schubert/action"
 module Schubert::Actions
   class Apt < Schubert::Action
     def install(name)
-      @system.run "apt-get install #{name}"
+      @system.run "apt-get install -q --force-yes #{name}"
     end
 
     def update_cache
@@ -11,18 +11,18 @@ module Schubert::Actions
     end
 
     def remove(name)
-      @system.run "apt-get remove #{name}"
+      @system.run "apt-get autoremove -y #{name}"
     end
 
     def add_source(name, url, dir)
       content = "deb #{url} #{@system.debian_release} #{dir}\n"
 
       @system.mkdir "/etc/apt/sources.list.d"
-      @system.write_file "/etc/apt/sources.list.d/schubert-#{name}", content
+      @system.write_file "/etc/apt/sources.list.d/schubert-#{name}.list", content
     end
 
     def remove_source(name)
-      @system.delete "/etc/apt/sources.list.d/schubert-#{name}"
+      @system.delete "/etc/apt/sources.list.d/schubert-#{name}.list"
       @system.rmdir_if_empty "/etc/apt/sources.list.d"
     end
   end

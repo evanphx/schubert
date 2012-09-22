@@ -1,3 +1,58 @@
 #!/usr/bin/env ruby
 
-abort "you need to write me"
+require 'optparse'
+
+require "schubert/system"
+require "schubert/systems/ssh"
+require "schubert/systems/vagrant"
+
+require "schubert/rule_set"
+
+options = {}
+
+opts = OptionParser.new do |o|
+  o.on "-H HOST", "Which system to run against" do |h|
+    if h.index("@")
+      options[:user], options[:host] = h.split("@", 2)
+    else
+      options[:host] = h
+    end
+  end
+
+  o.on "-V DIR", "Connect using Vagrant from DIR" do |d|
+    options[:vagrant] = d
+  end
+
+  o.on "-h" do
+    puts o.help
+    exit 1
+  end
+end
+
+opts.parse! ARGV
+
+rules = ARGV.shift
+
+unless rules
+  puts "Please specify the rule file to use"
+  exit 1
+end
+
+puts "Loading and executing '#{rules}'"
+
+# Schubert::System.current = Schubert::Systems::SSH.new(options[:user], options[:host])
+Schubert::System.current = Schubert::Systems::Vagrant.new(options[:vagrant])
+
+rules = eval File.read(rules)
+
+unless rules.kind_of? Schubert::RuleSet
+  puts "Rules file didn't yield a RuleSet"
+  exit 1
+end
+
+require 'pp'
+
+state = rules.calculate
+
+state.execute
+

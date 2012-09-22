@@ -11,13 +11,14 @@ class TestSchubertRulesPackage < Test::Unit::TestCase
   def test_up
     @pkg.up
 
-    assert_equal [[:run, "apt-get install nginx"]], @system.commands
+    assert_equal [[:run, "apt-get install -q --force-yes nginx"]],
+                 @system.commands
   end
 
   def test_down
     @pkg.down
 
-    assert_equal [[:run, "apt-get remove nginx"]], @system.commands
+    assert_equal [[:run, "apt-get autoremove -y nginx"]], @system.commands
   end
 
   def test_up_with_source
@@ -30,10 +31,10 @@ class TestSchubertRulesPackage < Test::Unit::TestCase
 
     assert_equal [
       [:mkdir, "/etc/apt/sources.list.d"],
-      [:write, "/etc/apt/sources.list.d/schubert-nginx",
+      [:write, "/etc/apt/sources.list.d/schubert-nginx.list",
                "deb http://blah.com cute blah\n"],
       [:run, "apt-get update"],
-      [:run, "apt-get install nginx"]
+      [:run, "apt-get install -q --force-yes nginx"]
     ], @system.commands
   end
 
@@ -44,8 +45,8 @@ class TestSchubertRulesPackage < Test::Unit::TestCase
     pkg.down
 
     assert_equal [
-      [:run, "apt-get remove nginx"],
-      [:delete, "/etc/apt/sources.list.d/schubert-nginx"],
+      [:run, "apt-get autoremove -y nginx"],
+      [:delete, "/etc/apt/sources.list.d/schubert-nginx.list"],
       [:rmdir_if_empty, "/etc/apt/sources.list.d"],
       [:run, "apt-get update"],
     ], @system.commands

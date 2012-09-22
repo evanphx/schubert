@@ -11,7 +11,8 @@ class TestSchubertActionApt < Test::Unit::TestCase
   def test_install
     @apt.install "nginx"
 
-    assert_equal [[:run, "apt-get install nginx"]], @system.commands
+    assert_equal [[:run, "apt-get install -q --force-yes nginx"]],
+                 @system.commands
   end
 
   def test_update_cache
@@ -23,7 +24,7 @@ class TestSchubertActionApt < Test::Unit::TestCase
   def test_remove
     @apt.remove "nginx"
 
-    assert_equal [[:run, "apt-get remove nginx"]], @system.commands
+    assert_equal [[:run, "apt-get autoremove -y nginx"]], @system.commands
   end
 
   def test_add_source
@@ -35,7 +36,7 @@ class TestSchubertActionApt < Test::Unit::TestCase
     c = @system.commands
     assert_equal [:mkdir, "/etc/apt/sources.list.d"], c[0]
     assert_equal [:write, 
-                   "/etc/apt/sources.list.d/schubert-blah", expected], c[1]
+                   "/etc/apt/sources.list.d/schubert-blah.list", expected], c[1]
   end
 
   def test_remove_source
@@ -43,7 +44,7 @@ class TestSchubertActionApt < Test::Unit::TestCase
 
     c = @system.commands
 
-    assert_equal [:delete, "/etc/apt/sources.list.d/schubert-blah"], c[0]
+    assert_equal [:delete, "/etc/apt/sources.list.d/schubert-blah.list"], c[0]
     assert_equal [:rmdir_if_empty, "/etc/apt/sources.list.d"], c[1]
   end
 end

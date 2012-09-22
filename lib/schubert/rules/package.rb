@@ -1,4 +1,5 @@
 require "schubert/rule"
+require "schubert/actions/apt"
 
 module Schubert::Rules
   class Package < Schubert::Rule

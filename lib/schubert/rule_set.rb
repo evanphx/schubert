@@ -1,4 +1,5 @@
 require "schubert/rules/package"
+require "schubert/state"
 
 module Schubert
   class RuleSet
@@ -8,17 +9,11 @@ module Schubert
     end
 
     def package(name)
-      @rules << Schubert::Rules::Package.new(@system, name)
-    end
+      x = Schubert::Rules::Package.new(@system, name)
+      @rules << x
 
-    class State
-      def initialize(rules, up=[], down=[])
-        @rules = rules
-        @up = up
-        @down = down
-      end
-
-      attr_reader :rules, :up, :down
+      yield x if block_given?
+      x
     end
 
     def calculate(prev=nil)
@@ -31,5 +26,11 @@ module Schubert
         State.new @rules, @rules.dup, []
       end
     end
+  end
+
+  def self.rules
+    r = RuleSet.new System.current
+    yield r
+    r
   end
 end
