@@ -20,5 +20,10 @@ module Schubert::Actions
       @system.mkdir "/etc/apt/sources.list.d"
       @system.write_file "/etc/apt/sources.list.d/schubert-#{name}", content
     end
+
+    def remove_source(name)
+      @system.delete "/etc/apt/sources.list.d/schubert-#{name}"
+      @system.rmdir_if_empty "/etc/apt/sources.list.d"
+    end
   end
 end

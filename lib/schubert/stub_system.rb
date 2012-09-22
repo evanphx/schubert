@@ -19,5 +19,13 @@ module Schubert
     def write_file(path, content)
       @commands << [:write, path, content]
     end
+
+    def delete(path)
+      @commands << [:delete, path]
+    end
+
+    def rmdir_if_empty(path)
+      @commands << [:rmdir_if_empty, path]
+    end
   end
 end

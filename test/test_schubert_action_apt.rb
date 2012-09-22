@@ -37,4 +37,13 @@ class TestSchubertActionApt < Test::Unit::TestCase
     assert_equal [:write, 
                    "/etc/apt/sources.list.d/schubert-blah", expected], c[1]
   end
+
+  def test_remove_source
+    @apt.remove_source "blah"
+
+    c = @system.commands
+
+    assert_equal [:delete, "/etc/apt/sources.list.d/schubert-blah"], c[0]
+    assert_equal [:rmdir_if_empty, "/etc/apt/sources.list.d"], c[1]
+  end
 end
