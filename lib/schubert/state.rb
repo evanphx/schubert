@@ -9,8 +9,23 @@ module Schubert
     attr_reader :rules, :up, :down
 
     def execute
-      down.each { |d| d.down }
-      up.each { |u| u.up }
+      ran_down = []
+      ran_up = []
+
+      begin
+        down.each do |d|
+          d.down
+          ran_down << d
+        end
+
+        up.each do |u|
+          u.up
+          ran_up << u
+        end
+      rescue StandardError
+        ran_up.reverse_each { |u| u.down }
+        ran_down.reverse_each { |d| d.up }
+      end
     end
   end
 end

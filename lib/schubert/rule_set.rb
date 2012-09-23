@@ -8,6 +8,10 @@ module Schubert
       @rules = []
     end
 
+    def inject_rule(rule)
+      @rules << rule
+    end
+
     def package(name)
       x = Schubert::Rules::Package.new(@system, name)
       @rules << x
