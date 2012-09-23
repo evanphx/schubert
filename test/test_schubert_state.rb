@@ -28,7 +28,9 @@ class TestSchubertState < Test::Unit::TestCase
 
     r.inject_rule PoisonRule.new
 
-    r.calculate.execute
+    assert_raises RuntimeError do
+      r.calculate.execute
+    end
 
     assert_equal [[:run, "apt-get install -q --force-yes nginx"],
                   [:run, "apt-get autoremove -y nginx"]],

@@ -22,9 +22,11 @@ module Schubert
           u.up
           ran_up << u
         end
-      rescue StandardError
+      rescue StandardError => e
         ran_up.reverse_each { |u| u.down }
         ran_down.reverse_each { |d| d.up }
+
+        raise e
       end
     end
   end
