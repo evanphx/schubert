@@ -8,6 +8,10 @@ module Schubert::Rules
       @down_command = down_cmd
     end
 
+    def save_data
+      { "type" => "shell", "up" => @command, "down" => @down_command }
+    end
+
     def up
       @system.run @command
     end

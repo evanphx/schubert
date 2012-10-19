@@ -7,6 +7,8 @@ require "schubert/systems/ssh"
 require "schubert/systems/vagrant"
 
 require "schubert/rule_set"
+require "schubert/setup"
+require "schubert/transactions"
 
 options = {}
 
@@ -41,7 +43,8 @@ end
 puts "Loading and executing '#{rules}'"
 
 # Schubert::System.current = Schubert::Systems::SSH.new(options[:user], options[:host])
-Schubert::System.current = Schubert::Systems::Vagrant.new(options[:vagrant])
+sys = Schubert::Systems::Vagrant.new(options[:vagrant])
+Schubert::System.current = sys
 
 rules = eval File.read(rules)
 
@@ -50,9 +53,14 @@ unless rules.kind_of? Schubert::RuleSet
   exit 1
 end
 
-require 'pp'
-
 state = rules.calculate
 
-state.execute
+setup = Schubert::Setup.new sys
+conf = setup.configure
+
+puts "Executing state change against #{conf.name}"
+
+trans = Schubert::Transactions.new sys
+
+state.execute trans
 

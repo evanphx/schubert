@@ -1,4 +1,5 @@
 require "schubert/rules/package"
+require "schubert/rules/shell"
 require "schubert/state"
 
 module Schubert
@@ -17,6 +18,23 @@ module Schubert
       @rules << x
 
       yield x if block_given?
+      x
+    end
+
+    def shell(up, down=nil)
+      x = Schubert::Rules::Shell.new @system, up, down
+      @rules << x
+      x
+    end
+
+    def directory(dir, opts=nil)
+      x = Schubert::Rules::Directory.new @system, dir
+      @rules << x
+
+      if opts && (u = opts[:owner])
+        @rules << Schubert::Rules::Shell.new(@system, "chown #{u} #{dir}")
+      end
+
       x
     end
 

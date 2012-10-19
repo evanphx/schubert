@@ -1,4 +1,5 @@
 require "schubert/system"
+require "socket"
 
 module Schubert::Systems
   class SSH
@@ -23,7 +24,9 @@ module Schubert::Systems
     end
 
     def scp(local, remote)
-      sh "scp #{local} #{@user}@#{@host}:#{remote}"
+      tmp = "/tmp/#{$$}-#{Time.now.to_f}"
+      sh "scp #{local} #{@user}@#{@host}:#{tmp}"
+      run "mv #{tmp} #{remote}"
     end
 
     def debian_release
@@ -52,12 +55,40 @@ module Schubert::Systems
       t.close!
     end
 
+    def append_file(path, contents)
+      t = Tempfile.new "schubert"
+      t << contents
+      t.close
+
+      run "'cat >> #{path}' < #{t.path}"
+
+      t.close!
+    end
+
+    def read_file(path)
+      out = run "cat #{path}", true
+      return nil if $?.exitstatus != 0
+      out
+    end
+
     def delete(path)
       run "rm #{path}"
     end
 
     def rmdir_if_empty(path)
       run "rmdir #{path} || true"
+    end
+
+    def list_files(dir)
+      out = run("ls #{dir}", true)
+
+      return [] if $?.exitstatus != 0
+
+      out.split("\n")
+    end
+
+    def random_id
+      Digest::SHA1.hexdigest "#{Time.now.to_f}#{Socket.gethostname}#{$$}"
     end
   end
 end
